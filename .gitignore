@@ -1,0 +1,32 @@
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+
+# Packaged extension files
+*.zip
+*.crx
+*.pem
+
+# Test / coverage output
+coverage/
