@@ -1,0 +1,212 @@
+/* The CANADA List Extension - Badge & Page Styles */
+
+/**
+ * CANADA Score Badge
+ * Injected onto product listings
+ */
+.canada-list-badge {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+  z-index: 1000 !important;
+  border: 2.5px solid #ffffff !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.canada-list-badge:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.32) !important;
+}
+
+.canada-score-number {
+  font-size: 20px !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35) !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.canada-score-label {
+  font-size: 10px !important;
+  color: #ffffff !important;
+  letter-spacing: 1.5px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+/**
+ * Tooltip - appears on hover
+ */
+.canada-badge-tooltip {
+  all: initial !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  position: fixed !important;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.18s ease !important;
+  z-index: 2147483647 !important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.08),
+    0 8px 24px rgba(0,0,0,0.16),
+    0 2px 6px rgba(0,0,0,0.10) !important;
+  max-width: min(300px, calc(100vw - 16px)) !important;
+  min-width: 220px !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  box-sizing: border-box !important;
+}
+
+.canada-badge-tooltip::before {
+  content: '' !important;
+  display: block !important;
+  height: 4px !important;
+  background: #D52B1E !important;
+  width: 100% !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.canada-badge-tooltip-inner {
+  padding: 12px 14px 13px !important;
+  display: block !important;
+}
+
+.canada-badge-tooltip strong {
+  all: unset !important;
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin-bottom: 8px !important;
+  line-height: 1.3 !important;
+  font-family: inherit !important;
+}
+
+.canada-badge-tooltip .tcl-score-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-bottom: 7px !important;
+}
+
+.canada-badge-tooltip .tcl-score-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2px 9px !important;
+  border-radius: 99px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  line-height: 1.4 !important;
+}
+
+.canada-badge-tooltip .tcl-meta {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 2px 8px !important;
+  font-size: 12px !important;
+  color: #444 !important;
+  margin-bottom: 0 !important;
+}
+
+.canada-badge-tooltip .tcl-meta-label {
+  color: #888 !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+.canada-badge-tooltip .tcl-meta-value {
+  color: #1a1a1a !important;
+}
+
+.canada-badge-tooltip small {
+  all: unset !important;
+  display: block !important;
+  margin-top: 9px !important;
+  padding-top: 9px !important;
+  border-top: 0.5px solid #e8e8e8 !important;
+  font-size: 11px !important;
+  color: #777 !important;
+  font-style: italic !important;
+  line-height: 1.45 !important;
+  font-family: inherit !important;
+}
+
+.canada-badge-tooltip-floating {
+  position: fixed !important;
+  margin-bottom: 0 !important;
+}
+
+.canada-badge-tooltip-floating::after {
+  display: none !important;
+}
+
+/* Accessibility: Ensure text contrast ratio meets WCAG AAA */
+@media (prefers-color-scheme: dark) {
+  .canada-badge-tooltip {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+}
+
+/* Ensure badges don't break layouts */
+@media (max-width: 480px) {
+  .canada-list-badge {
+    width: 40px !important;
+    height: 40px !important;
+    top: 4px !important;
+    right: 4px !important;
+  }
+
+  .canada-score-number {
+    font-size: 16px !important;
+  }
+
+  .canada-badge-tooltip {
+    min-width: 180px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Print styles - hide badges when printing */
+@media print {
+  .canada-list-badge,
+  .canada-badge-tooltip {
+    display: none !important;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .canada-list-badge,
+  .canada-badge-tooltip {
+    transition: none !important;
+  }
+
+  .canada-list-badge:hover {
+    transform: none !important;
+  }
+}
