@@ -1,48 +1,19 @@
-/**
- * Site adapter configurations.
- *
- * Each entry describes one supported retailer as pure data — no logic.
- * The universal engine in content.js reads these configs to drive all
- * DOM traversal, title extraction, and badge insertion.
- *
- * ADDING A NEW SITE
- * ─────────────────
- * 1. Copy the walmart block below, fill in the correct selectors/options.
- * 2. Add a new content_scripts entry in manifest.json (matches + host_permissions).
- * That's it — content.js needs no changes.
- */
+// Store finder markup here — content.js picks the first match() that fits hostname.
+// New grocer: duplicate one block, fix selectors, add URLs to manifest.json.
 
 const TCL_SITE_CONFIGS = [
 
-  // ─── Walmart.ca ───────────────────────────────────────────────────────────
+  // Walmart
   {
     name: 'walmart',
 
-    /**
-     * Return true when this config should be active.
-     * Called with window.location.hostname.
-     */
     match(hostname) {
       return hostname.includes('walmart.ca');
     },
 
     selectors: {
-      /**
-       * Root element used to scope the product-link query.
-       * Keeps the engine out of site-nav and footer links.
-       */
       root: 'main',
-
-      /**
-       * CSS selector for an anchor element that identifies a product card.
-       * The engine walks up from each matched anchor to locate its card container.
-       */
       productLink: 'a[href*="/ip/"]',
-
-      /**
-       * Ordered list of selectors tried when climbing the DOM from the product
-       * link to find the stable card container. First ancestor match wins.
-       */
       cardCandidates: [
         '[data-item-id]',
         '[data-testid="product-card"]',
@@ -50,12 +21,6 @@ const TCL_SITE_CONFIGS = [
         'article',
         'li',
       ],
-
-      /**
-       * Selectors tried inside the card to pull the product title text.
-       * Only used when options.titleSources includes 'card'.
-       * Tried in order; first non-empty match wins.
-       */
       titleOnCard: [
         '[data-testid*="title"]',
         '[data-testid*="name"]',
@@ -64,28 +29,11 @@ const TCL_SITE_CONFIGS = [
         'h3',
         'h4',
       ],
-
-      /**
-       * Optional brand element inside the card.
-       * When options.prependBrand is true and this element is found,
-       * its text is prepended to the title if not already present.
-       */
       brand: '[data-testid*="brand"], [itemprop="brand"]',
-
-      /**
-       * Selectors for the badge insertion anchor (typically the price line).
-       * Tried in order inside the card; first match wins.
-       * Falls back to a span inside the product link, then the link itself.
-       */
       insertTarget: [
         '[data-testid*="price"]',
         '[aria-label*="price" i]',
       ],
-
-      /**
-       * Selectors for the title element on a Product Detail Page (PDP).
-       * Tried in document order; first non-empty element wins.
-       */
       detailTitle: [
         '[data-testid="product-title"]',
         'h1[itemprop="name"]',
@@ -95,71 +43,24 @@ const TCL_SITE_CONFIGS = [
     },
 
     options: {
-      /**
-       * Skip duplicate product links that share the same URL pathname.
-       * Prevents the same /ip/ product from being processed multiple times
-       * when Walmart renders several links to the same item on one page.
-       */
       dedupeByPathname: true,
-
-      /**
-       * Ordered list of strategies used to extract the product title from a link.
-       *   'aria'  → link's aria-label attribute
-       *   'text'  → link's visible textContent
-       *   'inner' → first <span dir> or <span> inside the link
-       *   'card'  → selectors.titleOnCard searched inside the card container
-       * The engine collects all non-empty candidates and picks the longest one.
-       */
       titleSources: ['aria', 'text', 'inner', 'card'],
-
-      /**
-       * When true, the brand text (from selectors.brand) is prepended to the
-       * title if the title doesn't already contain it.
-       */
       prependBrand: true,
-
-      /**
-       * URL pathname fragments that identify a Product Detail Page.
-       * When any fragment matches location.pathname, the engine also looks for
-       * the PDP title and injects a full-size badge.
-       */
       detailPagePatterns: ['/ip/', '/product/'],
-
-      /** DOM insertion position relative to the insertTarget element. */
       insertPosition: 'afterend',
-
-      /** Inline styles applied to the badge host element. */
       badgeStyle: {
         listing: { display: 'block', margin: '6px 0 4px 0', position: 'relative', zIndex: '2147483646' },
         detail:  { display: 'block', margin: '10px 0',      position: 'relative', zIndex: '2147483646' },
       },
-
-      /**
-       * Walmart's internal item number lives on the card container as data-item-id.
-       * Not a UPC, but Harris can cross-reference it in Supabase if he builds
-       * a Walmart item ID → product mapping.
-       */
       itemIdAttribute: 'data-item-id',
-
-      /**
-       * Regex (one capture group) run against the product link href to extract
-       * the item number. Used on PDPs where data-item-id isn't on the title element.
-       * Walmart PDPs: walmart.ca/en/ip/product-name/12345678
-       */
       itemIdFromUrl: '\\/ip\\/[^/]+\\/(\\d+)',
-
-      /**
-       * Site-specific title noise stripped after the global patterns.
-       * Walmart often shows bilingual titles: "Product Name / Nom du produit"
-       * Pattern: strip " / " followed by a French/capitalized phrase at end of string.
-       */
       titleStripPatterns: [
         '\\s*\\/\\s*[A-ZÀ-Ö][a-zà-öø-ÿ][^/]{2,}$',
       ],
     },
   },
 
-  // ─── Loblaws.ca ───────────────────────────────────────────────────────────
+  // Loblaws (same stack as PC Express / Chakra)
   {
     name: 'loblaws',
 
@@ -170,14 +71,14 @@ const TCL_SITE_CONFIGS = [
     selectors: {
       root: 'main',
 
-      // chakra-linkbox__overlay is the full-card overlay anchor — stable Chakra class
+      // big clickable overlay — hashed classes change but this sticks
       productLink: 'a.chakra-linkbox__overlay',
 
       cardCandidates: [
         '.chakra-linkbox',
       ],
 
-      // <h3 data-testid="product-title"> is the most reliable title source
+      // title lives here on tiles
       titleOnCard: [
         '[data-testid="product-title"]',
         'h3',
@@ -200,12 +101,12 @@ const TCL_SITE_CONFIGS = [
     options: {
       dedupeByPathname: true,
 
-      // The overlay anchor has no clean aria-label; card selectors give the cleanest title
+      // overlay link text is noisy — pull title from the card instead
       titleSources: ['card', 'aria'],
 
       prependBrand: true,
 
-      // Product URLs follow /en/<slug>/p/<sku>
+      // .../p/20323757004_EA style URLs
       detailPagePatterns: ['/p/'],
 
       insertPosition: 'afterend',
@@ -215,24 +116,16 @@ const TCL_SITE_CONFIGS = [
         detail:  { display: 'block', margin: '10px 0',      position: 'relative', zIndex: '2147483646' },
       },
 
-      /**
-       * Loblaws SKU lives in the product URL: /en/<slug>/p/21657456_EA
-       * Capture group 1 returns the full SKU including the _EA suffix.
-       */
       itemIdFromUrl: '\\/p\\/([A-Za-z0-9_]+)(?:\\?|$)',
 
-      /**
-       * Loblaws shows bilingual titles and appends package size.
-       * Strip bilingual slash suffix and any trailing size not caught by global patterns.
-       */
       titleStripPatterns: [
-        '\\s*\\/\\s*[A-ZÀ-Ö][a-zà-öø-ÿ][^/]{2,}$',  // bilingual "/ Crème glacée"
-        '\\b\\d+\\s*(x|X)\\s*\\d+\\s*(ml|mL|g|L)\\b', // multipack "4 x 500ml"
+        '\\s*\\/\\s*[A-ZÀ-Ö][a-zà-öø-ÿ][^/]{2,}$',
+        '\\b\\d+\\s*(x|X)\\s*\\d+\\s*(ml|mL|g|L)\\b',
       ],
     },
   },
 
-  // ─── No Frills ─────────────────────────────────────────────────────────────
+  // No Frills (same card markup as Loblaws)
   {
     name: 'nofrills',
 
@@ -243,7 +136,6 @@ const TCL_SITE_CONFIGS = [
     selectors: {
       root: 'main',
 
-      // No Frills uses the same PC Express/Chakra product-card structure as Loblaws.
       productLink: 'a.chakra-linkbox__overlay',
 
       cardCandidates: [
@@ -290,7 +182,7 @@ const TCL_SITE_CONFIGS = [
     },
   },
 
-  // ─── Metro.ca ──────────────────────────────────────────────────────────────
+  // Metro
   {
     name: 'metro',
 
@@ -301,7 +193,6 @@ const TCL_SITE_CONFIGS = [
     selectors: {
       root: 'main',
 
-      // Metro product URLs consistently end with /p/<product-code>.
       productLink: 'a.product-details-link[href*="/p/"]',
 
       cardCandidates: [
@@ -333,14 +224,12 @@ const TCL_SITE_CONFIGS = [
     options: {
       dedupeByPathname: true,
 
-      // Prefer Metro's clean data attribute over visible text.
       titleAttribute: 'data-product-name-en',
       brandAttribute: 'data-product-brand',
       titleSources: ['card', 'aria', 'text'],
 
       prependBrand: true,
 
-      // Metro PDP/listing URLs use /p/<UPC-or-product-code>.
       detailPagePatterns: ['/p/'],
 
       insertPosition: 'afterend',
@@ -350,7 +239,6 @@ const TCL_SITE_CONFIGS = [
         detail:  { display: 'block', margin: '10px 0',      position: 'relative', zIndex: '2147483646' },
       },
 
-      // Metro exposes UPC/product code directly on the card.
       itemIdAttribute: 'data-product-code',
       itemIdFromUrl: '\\/p\\/([A-Za-z0-9_]+)(?:\\?|$)',
 
@@ -361,7 +249,7 @@ const TCL_SITE_CONFIGS = [
     },
   },
 
-  // ─── Food Basics ───────────────────────────────────────────────────────────
+  // Food Basics (Metro-style tiles)
   {
     name: 'foodbasics',
 
@@ -372,7 +260,6 @@ const TCL_SITE_CONFIGS = [
     selectors: {
       root: 'main',
 
-      // Food Basics is a Metro banner and commonly uses the same product tile markup.
       productLink: 'a.product-details-link[href*="/p/"]',
 
       cardCandidates: [
@@ -425,7 +312,7 @@ const TCL_SITE_CONFIGS = [
     },
   },
 
-  // ─── Sobeys / Voila ────────────────────────────────────────────────────────
+  // Sobeys / Voila
   {
     name: 'sobeys',
 
@@ -436,7 +323,6 @@ const TCL_SITE_CONFIGS = [
     selectors: {
       root: 'main',
 
-      // Product card overlay link. Sobeys/Voila product pages use /products/<slug>.
       productLink: 'a[href^="/products/"], a[href*="/products/"]',
 
       cardCandidates: [
@@ -466,7 +352,6 @@ const TCL_SITE_CONFIGS = [
     options: {
       dedupeByPathname: true,
 
-      // The product title is cleanest from the visible card title or image alt.
       titleSources: ['card', 'aria'],
 
       prependBrand: false,
@@ -480,7 +365,6 @@ const TCL_SITE_CONFIGS = [
         detail:  { display: 'block', margin: '10px 0',      position: 'relative', zIndex: '2147483646' },
       },
 
-      // Example: data-object-id="887288_EA_4743"; data-id="887288".
       itemIdAttribute: 'data-object-id',
 
       titleStripPatterns: [
@@ -490,9 +374,8 @@ const TCL_SITE_CONFIGS = [
     },
   },
 
-  // ─── Add more sites below ─────────────────────────────────────────────────
-
 ];
+
 
 if (typeof globalThis !== 'undefined') {
   globalThis.TCL_SITE_CONFIGS = TCL_SITE_CONFIGS;

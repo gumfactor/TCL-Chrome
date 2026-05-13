@@ -1,33 +1,10 @@
-/**
- * Background service worker.
- *
- * All product lookups now go through the live TCL API.
- * A local sample-products.json acts as an offline/dev fallback only.
- *
- * LOOKUP FLOW (per message)
- * ─────────────────────────
- * 1. TCLCache check  →  cache hit: return immediately, done.
- * 2. POST /v1/search/batch  →  success: cache + return.
- * 3. Parallel GET /v1/search?q= per item  →  success: cache + return.
- *    (keeps working while Harris's batch endpoint is still in development)
- * 4. Local sample-products.json  →  always available for offline / dev work.
- *
- * API CONTRACT (agree with Harris before his first deploy)
- * ────────────────────────────────────────────────────────
- * Batch:
- *   POST /v1/search/batch
- *   Body: { "queries": [{ "key": "0", "query": "Chapman's Ice Cream", "itemId": "12345678" }, …] }
- *   200:  { "results": [{ "key": "0", "products": [ <product> ] }, …] }
- *   itemId is optional — Walmart item number or Loblaws SKU. Harris can use it
- *   for a precise lookup if his DB has a retailer item ID → product mapping.
- *
- * Single:
- *   GET /v1/search?q=<query>&browse=1[&item_id=<itemId>]
- *   200: { "products": [ <product>, … ] }
- *
- * Product shape: { id, name, brand, canadaScore, ownerNation, ownership,
- *                  manufacturing, sourcing, jobSupport, keywords, upc, reassessed }
- */
+// Background worker — talks to the TCL API and caches results.
+// If the API errors or batch isn't ready yet, we hit GET /search per row or fall back to sample-products.json.
+//
+// Batch API (preferred): POST /v1/search/batch
+//   body: { queries: [{ key, query, itemId? }] }
+//   returns: { results: [{ key, products: [...] }] }
+// Single search: GET /v1/search?q=...&browse=1&item_id=... → { products } or { results }
 
 import { TCLCache } from '../lib/cache.js';
 
@@ -36,6 +13,7 @@ const FALLBACK_DATA_URL = chrome.runtime.getURL('data/sample-products.json');
 const UNINSTALL_FEEDBACK_URL = 'https://thecanadalist.ca/uninstall';
 const TIMEOUT_MS        = 8000;
 
+// Send people to the marketing site when they uninstall (Chrome can't open extension pages after removal).
 function registerUninstallFeedbackPage() {
   chrome.runtime.setUninstallURL(UNINSTALL_FEEDBACK_URL, () => {
     if (chrome.runtime.lastError) {
@@ -44,12 +22,6 @@ function registerUninstallFeedbackPage() {
   });
 }
 
-// ─── API helpers ──────────────────────────────────────────────────────────────
-
-/**
- * POST /v1/search/batch
- * Returns the results array from the API, or null on any failure.
- */
 async function apiBatchSearch(queries) {
   try {
     const resp = await fetch(`${API_BASE}/search/batch`, {
@@ -73,10 +45,6 @@ async function apiBatchSearch(queries) {
   }
 }
 
-/**
- * GET /v1/search?q=<query>[&browse=1]
- * Returns a products array, or null on any failure.
- */
 async function apiSearch(query, browse = false, itemId = null) {
   try {
     const url = new URL(`${API_BASE}/search`);
@@ -99,8 +67,6 @@ async function apiSearch(query, browse = false, itemId = null) {
     return null;
   }
 }
-
-// ─── Local fallback (sample-products.json) ────────────────────────────────────
 
 let _fallbackProducts = null;
 
@@ -162,21 +128,12 @@ async function fallbackSearch(query) {
   return matches.slice(0, 3);
 }
 
-// ─── Lookup orchestration ─────────────────────────────────────────────────────
-
-/**
- * Handles TCL_LOOKUP_BATCH (sent by content scripts on product listing pages).
- *
- * 1. Pulls per-query cache hits immediately.
- * 2. Sends uncached queries to the batch endpoint.
- * 3. On batch failure: falls back to parallel individual GETs.
- * 4. On API failure: falls back to local sample.
- */
+// Listing pages: batch message from content script — try cache, then API batch, then one GET per row, then sample JSON.
 async function handleBatch(queries, browse) {
   const results   = [];
   const uncached  = [];
 
-  // Step 1 – cache
+  // cached lookups first (same key we used last time)
   for (const q of queries) {
     const cacheKey = `${browse ? 'b' : 's'}:${q.query}`;
     const cached   = await TCLCache.get(cacheKey);
@@ -189,10 +146,10 @@ async function handleBatch(queries, browse) {
 
   if (uncached.length === 0) return results;
 
-  // Step 2 – batch API
+  // one POST for the whole batch when the endpoint exists
   let apiResults = await apiBatchSearch(uncached);
 
-  // Step 3 – individual API fallback (batch endpoint not yet deployed)
+  // no batch? spam parallel GETs instead (uglier but works)
   if (!apiResults) {
     console.log('[TCL] Batch endpoint unavailable, falling back to individual queries');
     apiResults = await Promise.all(
@@ -204,7 +161,7 @@ async function handleBatch(queries, browse) {
     );
   }
 
-  // Step 4 – cache results and collect
+  // write hits to storage; empty API rows get one more shot from local sample
   for (const r of apiResults) {
     if (r.products?.length > 0) {
       const orig = uncached.find(q => q.key === r.key);
@@ -212,7 +169,7 @@ async function handleBatch(queries, browse) {
         await TCLCache.set(`${browse ? 'b' : 's'}:${orig.query}`, r.products);
       }
     } else {
-      // API returned empty — try local sample before giving up
+      // dev/demo: maybe the sample file still has this product
       const orig = uncached.find(q => q.key === r.key);
       if (orig) {
         const fallback = await fallbackSearch(orig.query);
@@ -225,9 +182,6 @@ async function handleBatch(queries, browse) {
   return results;
 }
 
-/**
- * Handles TCL_LOOKUP (sent by the popup for keyword search).
- */
 async function handleLookup(query, browse) {
   const cacheKey = `${browse ? 'b' : 's'}:${query}`;
   const cached   = await TCLCache.get(cacheKey);
@@ -248,8 +202,6 @@ async function handleLookup(query, browse) {
 
   return products || [];
 }
-
-// ─── Message listeners ────────────────────────────────────────────────────────
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
@@ -296,8 +248,6 @@ chrome.runtime.onStartup?.addListener(() => {
 });
 
 registerUninstallFeedbackPage();
-
-// ─── Periodic cache cleanup ───────────────────────────────────────────────────
 
 chrome.alarms.create('tcl-cache-cleanup', { periodInMinutes: 360 });
 chrome.alarms.onAlarm.addListener((alarm) => {
