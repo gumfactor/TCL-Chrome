@@ -1,0 +1,130 @@
+{
+  "manifest_version": 3,
+  "name": "The CANADA List – Shop Canadian",
+  "version": "1.0.0",
+  "description": "See CANADA Scores on Canadian e-commerce sites. Instantly know how much a product contributes to the Canadian economy.",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.walmart.ca/*",
+    "https://www.loblaws.ca/*",
+    "https://www.nofrills.ca/*",
+    "https://nofrills.ca/*",
+    "https://www.metro.ca/*",
+    "https://www.foodbasics.ca/*",
+    "https://foodbasics.ca/*",
+    "https://www.sobeys.com/*",
+    "https://sobeys.com/*",
+    "https://www.voila.ca/*",
+    "https://voila.ca/*",
+    "https://api.thecanadalist.ca/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.walmart.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.loblaws.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.nofrills.ca/*",
+        "https://nofrills.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.metro.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.foodbasics.ca/*",
+        "https://foodbasics.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.sobeys.com/*",
+        "https://sobeys.com/*",
+        "https://www.voila.ca/*",
+        "https://voila.ca/*"
+      ],
+      "js": [
+        "lib/badge.js",
+        "content/site-configs.js",
+        "content/content.js"
+      ],
+      "css": [],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "data/sample-products.json"],
+      "matches": [
+        "https://www.walmart.ca/*"
+      ]
+    }
+  ]
+}

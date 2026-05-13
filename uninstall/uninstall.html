@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help us improve | The Canada List</title>
+  <link rel="stylesheet" href="uninstall.css">
+</head>
+<body>
+  <main class="uninstall-page">
+    <section class="feedback-card" aria-labelledby="feedback-title">
+      <header class="feedback-header">
+        <img class="feedback-logo" src="../icons/icon-128.png" alt="The Canada List logo" width="72" height="72">
+        <p class="eyebrow">The Canada List</p>
+        <h1 id="feedback-title">Help us improve</h1>
+        <p class="intro">Why did you uninstall the Chrome extension? Check all that apply.</p>
+      </header>
+
+      <form id="uninstall-feedback-form" class="feedback-form">
+        <fieldset>
+          <legend>Reason for uninstalling</legend>
+
+          <label class="checkbox-option">
+            <input type="checkbox" name="reason" value="badges_not_showing">
+            <span>Badges were not showing on the sites I use</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input type="checkbox" name="reason" value="wrong_matches">
+            <span>Product matches or scores looked wrong</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input type="checkbox" name="reason" value="performance">
+            <span>The extension slowed down shopping pages</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input type="checkbox" name="reason" value="privacy">
+            <span>I had privacy or security concerns</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input type="checkbox" name="reason" value="not_useful">
+            <span>I did not find it useful</span>
+          </label>
+
+          <label class="checkbox-option">
+            <input id="reason-other" type="checkbox" name="reason" value="other">
+            <span>Other</span>
+          </label>
+        </fieldset>
+
+        <label class="field-label" for="other-text">Other reason</label>
+        <input id="other-text" class="text-input" name="otherReason" type="text" placeholder="Tell us what happened" disabled>
+
+        <label class="field-label" for="explanation">Anything else you want us to know?</label>
+        <textarea id="explanation" class="textarea" name="explanation" rows="5" placeholder="Your feedback helps us improve product matching, badges, and site support."></textarea>
+
+        <button class="submit-button" type="submit">Submit feedback</button>
+        <p id="feedback-status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="uninstall.js"></script>
+</body>
+</html>

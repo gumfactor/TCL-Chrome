@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The CANADA List</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="tcl-popup">
+    <header class="tcl-header">
+      <div class="tcl-header__logo">
+        <img src="../icons/icon-48.png" alt="" width="28" height="28">
+        <div>
+          <h1 class="tcl-header__title">The CANADA List</h1>
+          <p class="tcl-header__subtitle">Shop Canadian</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Search -->
+      <section class="tcl-section">
+        <label for="tcl-search" class="tcl-label">Look up a product</label>
+        <div class="tcl-search-row">
+          <input
+            type="text"
+            id="tcl-search"
+            class="tcl-input"
+            placeholder="e.g. Chapman's Ice Cream"
+            autocomplete="off"
+            aria-describedby="tcl-search-hint"
+          >
+          <button id="tcl-search-btn" class="tcl-btn tcl-btn--primary" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="2"/>
+              <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <p id="tcl-search-hint" class="tcl-hint">Search the CANADA List database</p>
+        <div id="tcl-results" class="tcl-results" role="region" aria-live="polite" aria-label="Search results"></div>
+      </section>
+
+      <!-- Score legend -->
+      <section class="tcl-section">
+        <h2 class="tcl-section__title">Score Guide</h2>
+        <div class="tcl-legend">
+          <div class="tcl-legend__item">
+            <span class="tcl-legend__dot tcl-legend__dot--high" aria-hidden="true"></span>
+            <span><strong>7–10</strong> High Canadian contribution</span>
+          </div>
+          <div class="tcl-legend__item">
+            <span class="tcl-legend__dot tcl-legend__dot--mid" aria-hidden="true"></span>
+            <span><strong>4–6</strong> Moderate contribution</span>
+          </div>
+          <div class="tcl-legend__item">
+            <span class="tcl-legend__dot tcl-legend__dot--low" aria-hidden="true"></span>
+            <span><strong>1–3</strong> Low contribution</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats & controls -->
+      <section class="tcl-section tcl-section--footer">
+        <div class="tcl-stats">
+          <span id="tcl-stat-cached">—</span> cached
+          <span class="tcl-stats__sep">·</span>
+          <span id="tcl-stat-source">—</span>
+        </div>
+        <div class="tcl-actions">
+          <button id="tcl-clear-cache" class="tcl-btn tcl-btn--ghost">Clear cache</button>
+          <a href="https://thecanadalist.ca" target="_blank" rel="noopener" class="tcl-btn tcl-btn--ghost">
+            Visit site ↗
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="tcl-footer">
+      <p>v1.0.0 · Data by <a href="https://thecanadalist.ca" target="_blank" rel="noopener">thecanadalist.ca</a></p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

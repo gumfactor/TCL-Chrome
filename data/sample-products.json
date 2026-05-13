@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "version": "2.0.0",
+    "lastUpdated": "2026-04-18T00:00:00Z",
+    "totalProducts": 4
+  },
+  "products": [
+    {
+      "id": "tcl-heinz",
+      "name": "Heinz Tomato Ketchup",
+      "brand": "Heinz",
+      "category": "Condiments",
+      "canadaScore": 4,
+      "ownerNation": "usa",
+      "ownership": "Kraft Heinz",
+      "manufacturing": "Made in Canada",
+      "sourcing": "Mixed",
+      "jobSupport": "Moderate",
+      "reassessed": false,
+      "keywords": ["heinz", "ketchup", "tomato ketchup"],
+      "upc": "057000013530"
+    },
+    {
+      "id": "tcl-frenchs",
+      "name": "French's Tomato Ketchup",
+      "brand": "French's",
+      "category": "Condiments",
+      "canadaScore": 6,
+      "ownerNation": "usa",
+      "ownership": "McCormick",
+      "manufacturing": "Made in Canada",
+      "sourcing": "Canadian tomatoes",
+      "jobSupport": "Moderate",
+      "reassessed": true,
+      "keywords": ["frenchs", "french's", "ketchup", "tomato"],
+      "upc": "066200006587"
+    },
+    {
+      "id": "tcl-lays",
+      "name": "Lay's Classic Potato Chips",
+      "brand": "Lay's",
+      "category": "Snacks",
+      "canadaScore": 6,
+      "ownerNation": "usa",
+      "ownership": "PepsiCo",
+      "manufacturing": "Made in Canada",
+      "sourcing": "Mixed",
+      "jobSupport": "Moderate",
+      "reassessed": true,
+      "keywords": ["lays", "lay's", "potato chips", "classic chips"],
+      "upc": "060410004784"
+    },
+    {
+      "id": "tcl-chapmans",
+      "name": "Chapman's Premium Ice Cream",
+      "brand": "Chapman's",
+      "category": "Frozen",
+      "canadaScore": 10,
+      "ownerNation": "canada",
+      "ownership": "Family-owned, Ontario",
+      "manufacturing": "Made in Canada",
+      "sourcing": "Canadian dairy",
+      "jobSupport": "High",
+      "reassessed": true,
+      "keywords": ["chapmans", "chapman's", "ice cream", "premium"],
+      "upc": "068700100017"
+    }
+  ]
+}

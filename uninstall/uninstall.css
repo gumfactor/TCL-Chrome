@@ -1,0 +1,184 @@
+:root {
+  color-scheme: light;
+  --brand-red: #d71920;
+  --brand-red-dark: #a61218;
+  --text: #17212b;
+  --muted: #64748b;
+  --border: #dbe3ea;
+  --background: #f7fafc;
+  --card: #ffffff;
+  --focus: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(215, 25, 32, 0.12), transparent 34rem),
+    var(--background);
+}
+
+.uninstall-page {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+
+.feedback-card {
+  width: min(100%, 620px);
+  padding: 32px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+}
+
+.feedback-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.feedback-logo {
+  display: block;
+  margin: 0 auto 14px;
+  border-radius: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--brand-red);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 6vw, 44px);
+  line-height: 1.05;
+}
+
+.intro {
+  max-width: 440px;
+  margin: 14px auto 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.feedback-form {
+  display: grid;
+  gap: 18px;
+}
+
+fieldset {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend,
+.field-label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.checkbox-option:has(input:checked) {
+  border-color: var(--brand-red);
+  background: rgba(215, 25, 32, 0.06);
+}
+
+.checkbox-option input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--brand-red);
+}
+
+.text-input,
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  color: var(--text);
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.text-input:disabled {
+  color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.text-input:focus,
+.textarea:focus,
+.submit-button:focus-visible,
+.checkbox-option:has(input:focus-visible) {
+  outline: 3px solid rgba(37, 99, 235, 0.22);
+  outline-offset: 2px;
+  border-color: var(--focus);
+}
+
+.textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 14px 18px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 800;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand-red);
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background: var(--brand-red-dark);
+}
+
+.submit-button[disabled] {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.status {
+  min-height: 22px;
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 520px) {
+  .feedback-card {
+    padding: 24px 18px;
+    border-radius: 18px;
+  }
+}
