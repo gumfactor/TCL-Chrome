@@ -19,5 +19,7 @@ Chrome extension that displays CANADA Scores on e-commerce product listings to h
 - [ ] Research privacy guidelines and end-user concerns
 - [ ] Create a way to recommend, redirect and guide users to more "Canadian" products (eg. if they search up tvs, refer them to Canadian TVs, (maybe a small banner that pops up that users can click on and see recommended Canadian products)
 - [ ] Extension is running on all websites, need to restrict it to only run globally on ecommerce sites 
-- [X] Debug logging: Added detailed logging to track time it takes for badge to load and tracks successfuly injected badges without comprimising page load times 
+- [X] Debug logging: Added detailed logging to track time it takes for badge to load and tracks successfuly injected badges without comprimising page load times
+
+
 *Work in progress - documentation and features being actively developed.*
