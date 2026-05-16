@@ -492,7 +492,10 @@ let _inMemoryData = null;
 let _inMemoryExpiry = 0;
 
 async function fetchAndCacheData() {
+  const fetchTimer = performance.now();
+  
   try {
+    console.log('[CANADA-LIST-BG] Starting data fetch from API...');
     const response = await fetch(API_URL);
     if (!response.ok) {
       throw new Error(`API responded with status ${response.status}`);
@@ -510,10 +513,12 @@ async function fetchAndCacheData() {
       [CACHE_EXPIRY_KEY]: expiry
     });
 
-    console.log('✓ CANADA List data cached successfully', data.length);
+    const duration = performance.now() - fetchTimer;
+    console.log(`[CANADA-LIST-BG] Data cached successfully in ${duration.toFixed(2)}ms (${data.length} products)`);
     return data;
   } catch (error) {
-    console.error('✗ Failed to fetch CANADA List data:', error);
+    const duration = performance.now() - fetchTimer;
+    console.error(`[CANADA-LIST-BG] Failed to fetch data in ${duration.toFixed(2)}ms:`, error);
     return null;
   }
 }
@@ -522,10 +527,13 @@ async function fetchAndCacheData() {
  * Get cached data if valid, otherwise fetch fresh data
  */
 async function getCachedOrFreshData() {
+  const cacheTimer = performance.now();
   const now = Date.now();
 
   // Hot path: in-memory cache. Stable reference => AC trie / brand-profile caches stay warm.
   if (_inMemoryData && _inMemoryExpiry > now) {
+    const duration = performance.now() - cacheTimer;
+    console.log(`[CANADA-LIST-BG] Using in-memory cache (${duration.toFixed(2)}ms, ${_inMemoryData.length} products)`);
     return _inMemoryData;
   }
 
@@ -537,12 +545,16 @@ async function getCachedOrFreshData() {
       if (cachedData && expiry && expiry > Date.now()) {
         _inMemoryData = cachedData;
         _inMemoryExpiry = expiry;
+        const duration = performance.now() - cacheTimer;
+        console.log(`[CANADA-LIST-BG] Loaded from storage cache in ${duration.toFixed(2)}ms (${cachedData.length} products)`);
         resolve(cachedData);
         return;
       }
 
-      console.log('⟳ Cache expired or missing, fetching fresh data...');
+      console.log('[CANADA-LIST-BG] Cache expired or missing, fetching fresh data...');
       const freshData = await fetchAndCacheData();
+      const duration = performance.now() - cacheTimer;
+      console.log(`[CANADA-LIST-BG] Fresh data fetch completed in ${duration.toFixed(2)}ms`);
       resolve(freshData || cachedData || []);
     });
   });
@@ -552,8 +564,14 @@ async function getCachedOrFreshData() {
  * Get product info by matching product name
  */
 async function getProductInfo(productName, containerText) {
+  const searchTimer = performance.now();
+  
   const data = await getCachedOrFreshData();
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    const duration = performance.now() - searchTimer;
+    console.log(`[CANADA-LIST-BG] Product search failed (no data) in ${duration.toFixed(2)}ms for: ${productName}`);
+    return null;
+  }
 
   const brandData = getBrandDataCached(data);
   const acIndex = getSearchIndex(data, brandData);
@@ -561,7 +579,12 @@ async function getProductInfo(productName, containerText) {
   // 1. Aho-Corasick scan on the product name (catches multi-word product names AND brand aliases)
   if (productName) {
     const m = findBestAhoMatch(productName, acIndex);
-    if (m) return resolveAhoMatch(m, productName, brandData);
+    if (m) {
+      const result = resolveAhoMatch(m, productName, brandData);
+      const duration = performance.now() - searchTimer;
+      console.log(`[CANADA-LIST-BG] AC match found in ${duration.toFixed(2)}ms for: ${productName} (score: ${result['CANADIAN Score (out of 10)']})`);
+      return result;
+    }
   }
 
   const cleanedProductName = normalizeText(productName);
@@ -569,7 +592,11 @@ async function getProductInfo(productName, containerText) {
   // 2. Single-word brand-alias fallback (uses strict coverage / brand-position safety)
   if (cleanedProductName) {
     const brandFallback = getStrictBrandFallback(productName, brandData);
-    if (brandFallback) return brandFallback;
+    if (brandFallback) {
+      const duration = performance.now() - searchTimer;
+      console.log(`[CANADA-LIST-BG] Brand fallback match found in ${duration.toFixed(2)}ms for: ${productName} (score: ${brandFallback['CANADIAN Score (out of 10)']})`);
+      return brandFallback;
+    }
   }
 
   // 3. Fuzzy score match (catches partial overlaps the AC + alias paths missed)
@@ -587,13 +614,18 @@ async function getProductInfo(productName, containerText) {
       const umbrellaScore = getBrandUmbrellaScore(bestMatch, brandData);
       const directScore = Number(bestMatch['CANADIAN Score (out of 10)']);
       if (umbrellaScore !== null && umbrellaScore > directScore) {
-        return {
+        const result = {
           ...bestMatch,
           'CANADIAN Score (out of 10)': umbrellaScore,
           '__matchType': 'brand',
           '__matchedBrand': getCanonicalBrand(bestMatch) || bestMatch['Product Name']
         };
+        const duration = performance.now() - searchTimer;
+        console.log(`[CANADA-LIST-BG] Fuzzy brand match found in ${duration.toFixed(2)}ms for: ${productName} (score: ${result['CANADIAN Score (out of 10)']})`);
+        return result;
       }
+      const duration = performance.now() - searchTimer;
+      console.log(`[CANADA-LIST-BG] Fuzzy match found in ${duration.toFixed(2)}ms for: ${productName} (score: ${bestMatch['CANADIAN Score (out of 10)']})`);
       return bestMatch;
     }
   }
@@ -602,33 +634,53 @@ async function getProductInfo(productName, containerText) {
   //    missed but the product name appears elsewhere in the tile (description, alt text, etc.).
   if (containerText) {
     const m = findBestAhoMatch(containerText, acIndex);
-    if (m) return resolveAhoMatch(m, productName || containerText.slice(0, 100), brandData);
+    if (m) {
+      const result = resolveAhoMatch(m, productName || containerText.slice(0, 100), brandData);
+      const duration = performance.now() - searchTimer;
+      console.log(`[CANADA-LIST-BG] Container text match found in ${duration.toFixed(2)}ms for: ${productName} (score: ${result['CANADIAN Score (out of 10)']})`);
+      return result;
+    }
   }
 
-  console.log(`No match found for: ${productName}`);
+  const duration = performance.now() - searchTimer;
+  console.log(`[CANADA-LIST-BG] No match found in ${duration.toFixed(2)}ms for: ${productName}`);
   return null;
 }
 
 // Fetch data on extension install/update
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('The CANADA List extension installed. Fetching initial data...');
+  console.log('[CANADA-LIST-BG] Extension installed/updated. Fetching initial data...');
   fetchAndCacheData();
 });
 
 // Listen for messages from content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const messageTimer = performance.now();
+  
   if (request.action === 'getProductInfo') {
-    getProductInfo(request.productName, request.containerText).then(sendResponse);
+    getProductInfo(request.productName, request.containerText).then((result) => {
+      const duration = performance.now() - messageTimer;
+      console.log(`[CANADA-LIST-BG] Message processed in ${duration.toFixed(2)}ms for: ${request.productName}`);
+      sendResponse(result);
+    });
     return true; // Keep channel open for async response
   }
 
   if (request.action === 'getAllProducts') {
-    getCachedOrFreshData().then(sendResponse);
+    getCachedOrFreshData().then((result) => {
+      const duration = performance.now() - messageTimer;
+      console.log(`[CANADA-LIST-BG] All products request processed in ${duration.toFixed(2)}ms`);
+      sendResponse(result);
+    });
     return true;
   }
 
   if (request.action === 'refreshData') {
-    fetchAndCacheData().then(sendResponse);
+    fetchAndCacheData().then((result) => {
+      const duration = performance.now() - messageTimer;
+      console.log(`[CANADA-LIST-BG] Data refresh request processed in ${duration.toFixed(2)}ms`);
+      sendResponse(result);
+    });
     return true;
   }
 });
@@ -637,7 +689,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.alarms.create('refreshData', { periodInMinutes: 12 * 60 });
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'refreshData') {
-    console.log('⟳ Periodic refresh triggered');
+    console.log('[CANADA-LIST-BG] Periodic refresh triggered');
     fetchAndCacheData();
   }
 });
