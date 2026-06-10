@@ -21,7 +21,7 @@
         "http://*/*",
         "https://*/*"
       ],
-      "js": ["src/content/content-script.js"],
+      "js": ["src/content/universal-detector.js", "src/content/content-script.js"],
       "css": ["src/content/content-styles.css"]
     }
   ],

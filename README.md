@@ -1,28 +1,54 @@
 # The CANADA List Chrome Extension
 
-Chrome extension that displays CANADA Scores on e-commerce product listings to help Canadian consumers shop Canadian-owned products.
+A Chrome extension that shows CANADA Scores on online shopping sites to help you identify Canadian products.
 
-## Quick Start
-1. Load extension in Chrome developer mode
-2. Visit supported e-commerce sites (Amazon.ca, Walmart.ca, etc.)
-3. Look for circular score badges on products
+## What It Does
 
-## To Do list for Developers
-- [ ] Improve badge loading speed and responsiveness
-- [ ] Expand e-commerce site coverage
-- [ ] Some products on the list have their own specialized websites (for example clothing brand Bonnetier has a dedicated ecommerce site, we can globally give every product on that website their CANADA score and for all other products with their own ecommerce site) maybe brand match from the list with any websites we visit is the approach. 
-- [ ] Fix inconsistent product scoring and inaccurate descriptions
-- [ ] Fix badge injection positioning (sometimes injects in wrong places)
-- [ ] Improve keyword matching accuracy (currently matches similar products incorrectly)
-- [ ] Make badge design more sleek and refined (currently too subtle)
-- [ ] Add popup notification when extension is active on website
-- [ ] Research Honey extension design patterns and best practices
-- [ ] Research privacy guidelines and end-user concerns
-- [ ] Create a way to recommend, redirect and guide users to more "Canadian" products (eg. if they search up tvs, refer them to Canadian TVs, (maybe a small banner that pops up that users can click on and see recommended Canadian products)
-- [ ] Extension is running on all websites, need to restrict it to only run globally on ecommerce sites 
-- [ ] Fix badge overlapping website elements (When I scroll down the product page the badge scores from previous badges stay on the page so it overlaps search bar and clutters screen, overlapping page elements, etc.), also random badge scores are being injected in random places but not the actual product container (seen some cases of random floating badges, some badges being injected on page sorting filters, 2 badges of the same badge above and below a product container creating duplicate badges, bunch of messy badge injections)
-- [ ] When opening a page sometimes data doesnt load (it fixes when I refresh the data of the extension and then refresh the page) Maybe when opening a new page data automatically refreshed so data loads properly so the badges can load properly? Maybe another approach needed? 
-- [X] Expand e-commerce site coverage 
-- [X] Debug logging: Added detailed logging to track time it takes for badge to load and tracks successfuly injected badges without comprimising page load times 
+The extension automatically detects products while you shop online and displays their CANADA Score (1-10 rating based on Canadian ownership and manufacturing).
 
-*Work in progress - documentation and features being actively developed.*
+**Features:**
+- Score badges appear on product listings
+- Hover over badges to see ownership and manufacturing details
+- Site notifications when visiting Canadian company websites
+- Works on major retailers: Amazon, Walmart, Best Buy, Canadian Tire, and more
+
+## Installation
+
+1. Download the extension ZIP file
+2. Unzip the downloaded file - this creates a folder
+3. Open the unzipped folder - you'll see another folder inside (this is the actual extension folder)
+4. Open Chrome and go to `chrome://extensions/`
+5. Enable "Developer mode" (top right toggle)
+6. Click "Load unpacked"
+7. Select the **inner extension folder** (the one containing manifest.json)
+8. If you see "Manifest file is missing", you selected the wrong folder - go one level deeper
+
+**Important:** You must select the folder that contains manifest.json, not the outer folder created by unzipping. 
+
+## How to Use
+
+1. Visit any e-commerce website
+2. Browse products as normal
+3. Look for circular score badges on product images
+4. Hover over badges to see detailed information
+5. Click the extension icon for stats and controls
+
+## Score Guide
+
+- **9-10:** Excellent Canadian contribution
+- **7-8:** Good Canadian contribution
+- **5-6:** Moderate Canadian contribution
+- **3-4:** Limited Canadian contribution
+- **1-2:** Minimal Canadian contribution
+
+## Data Source
+
+Product data is sourced from The CANADA List database at thecanadalist.ca, updated automatically every 24 hours.
+
+## Privacy
+
+The extension does not collect or transmit any personal data. It only reads product names from web pages to match against the local database. See PRIVACY_BRIEF.md for details.
+
+## Support
+
+For questions or issues, visit thecanadalist.ca or check the documentation in the /docs folder.

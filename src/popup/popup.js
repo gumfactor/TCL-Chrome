@@ -117,14 +117,5 @@ statsBtn.addEventListener('click', async () => {
   }
 });
 
-/**
- * Handle settings link
- */
-document.getElementById('open-settings').addEventListener('click', (e) => {
-  e.preventDefault();
-  chrome.runtime.openOptionsPage ? chrome.runtime.openOptionsPage() : 
-    window.open(chrome.runtime.getURL('options.html'));
-});
-
 // Initialize on popup open
 updateStatus();
