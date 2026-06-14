@@ -1,0 +1,27 @@
+{
+  "name": "canada-list-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension that displays CANADA Scores on e-commerce sites",
+  "main": "manifest.json",
+  "scripts": {
+    "build": "echo 'No build process needed - pure JavaScript extension'",
+    "test": "echo 'Tests not yet implemented'",
+    "lint": "echo 'Linting not yet configured'",
+    "package": "zip -r canada-list-extension.zip . -x '*.git*' 'node_modules/*' '*.log' '.DS_Store'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "canada",
+    "e-commerce",
+    "canadian-products",
+    "shopping"
+  ],
+  "author": "The CANADA List",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thecanadalist/chrome-extension"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

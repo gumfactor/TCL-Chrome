@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The CANADA List</title>
+  <link rel="stylesheet" href="popup-styles.css">
+</head>
+<body>
+  <div class="popup-container">
+
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand-row">
+        <img src="../assets/icons/maple_leaf.png" alt="Maple leaf logo" class="brand-icon">
+        <div class="brand-text">
+          <h1>The <span>CANADA</span> List</h1>
+          <p class="tagline">Shop Canadian smarter</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="popup-main" style="display:flex;flex-direction:column;gap:8px;">
+
+      <!-- Status -->
+      <section class="card status-card">
+        <div id="status-message" class="status-loading">
+          Loading extension data...
+        </div>
+      </section>
+
+      <!-- Coverage -->
+      <section class="card compact-card">
+        <p class="card-title">Coverage</p>
+        <p class="coverage-text">Runs on ecommerce pages and shows scores only for direct or approved brand matches.</p>
+      </section>
+
+      <!-- Score guide -->
+      <section class="card score-guide">
+        <p class="card-title">Score Guide</p>
+        <div class="score-grid">
+          <div class="score-item">
+            <div class="score-dot" style="background:#0d6e35;"></div>
+            <span>9-10 Excellent</span>
+          </div>
+          <div class="score-item">
+            <div class="score-dot" style="background:#2d6b1a;"></div>
+            <span>7-8 Good</span>
+          </div>
+          <div class="score-item">
+            <div class="score-dot" style="background:#b8860b;"></div>
+            <span>5-6 Moderate</span>
+          </div>
+          <div class="score-item">
+            <div class="score-dot" style="background:#c97d1a;"></div>
+            <span>3-4 Limited</span>
+          </div>
+          <div class="score-item">
+            <div class="score-dot" style="background:#8b0000;"></div>
+            <span>1-2 Minimal</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <section class="actions">
+        <button id="refresh-btn" class="btn btn-primary">↻ Refresh Data</button>
+        <button id="stats-btn" class="btn btn-secondary">↗ View Stats</button>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a href="https://thecanadalist.ca/" target="_blank">Visit the site</a>
+      </div>
+      <span class="version">v1.0.0</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

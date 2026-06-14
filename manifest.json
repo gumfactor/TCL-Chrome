@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "The CANADA List",
+  "version": "1.0.0",
+  "description": "Shop Canadian! See CANADA Scores directly on e-commerce sites.",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://thecanadalist.ca/TheCanadaList.json",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["src/content/universal-detector.js", "src/content/content-script.js"],
+      "css": ["src/content/content-styles.css"]
+    }
+  ],
+  "icons": {
+    "16": "src/assets/icons/maple_leaf.png",
+    "32": "src/assets/icons/maple_leaf.png",
+    "48": "src/assets/icons/maple_leaf.png",
+    "128": "src/assets/icons/maple_leaf.png"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "src/assets/icons/maple_leaf.png",
+      "32": "src/assets/icons/maple_leaf.png"
+    },
+    "default_title": "The CANADA List"
+  }
+}
